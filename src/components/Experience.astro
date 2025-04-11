@@ -1,0 +1,28 @@
+---
+import ExperienceItem from "./ExperienceItem.astro";
+const EXPERIENCIE = [
+    {
+        date: "Actualmente...",
+        title: "Desarrollando proyectos propios",
+        description:
+            "Actualmente desarrollo proyectos personales que me permiten explorar nuevas tecnologías, con el objetivo de ampliar mis habilidades para mi próximo puesto laboral.",
+    },
+    {
+        date: "Enero 2021 - Junio 2022",
+        title: "Desarrollador Backend",
+        company: "CursosLite",
+        description:
+            "Desarrollé APIs en PHP y Laravel, automatizando la creación de rutas de estudio personalizadas utilizando la API de Udemy, y asegurando un sistema robusto mediante pruebas unitarias e integrales.",
+    },
+];
+---
+
+<ol class="relative mt-16">
+    {
+        EXPERIENCIE.map((experiencie) => (
+            <li>
+                <ExperienceItem {...experiencie} />
+            </li>
+        ))
+    }
+</ol>

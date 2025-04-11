@@ -1,0 +1,46 @@
+---
+import Gmail from "../icons/Gmail.astro";
+import LinkedIn from "../icons/LinkedIn.astro";
+import SocialPill from "./SocialPill.astro";
+import Badge from "./Badge.astro";
+import GitHub from "../icons/GitHub.astro";
+---
+
+<div class="max-w-xl">
+    <div class="flex gap-2 mb-2">
+        <a
+            href="https://www.linkedin.com/in/chriszumario"
+            target="_blank"
+            rel="noopener"
+            class="flex items-center transition md:justify-center md:hover:scale-105"
+        >
+            <Badge>Disponible para Trabajar</Badge>
+        </a>
+    </div>
+
+    <h1
+        class="text-4xl font-bold tracking-tight text-gray-800 sm:text-5xl dark:text-white"
+    >
+        Hola, soy Christian
+    </h1>
+    <p
+        class="mt-6 text-xl text-gray-800 dark:[&>strong]:text-yellow-300 [&>strong]:text-yellow-500 [&>strong]:font-semibold dark:text-gray-300"
+    >
+        <strong>Desarrollador full-stack</strong> especializado en JavaScript y TypeScript.
+        Actualmente en búsqueda de nuevas oportunidades profesionales.
+    </p>
+    <nav class="flex flex-wrap gap-4 mt-8">
+        <SocialPill href="mailto:christian12.dev@gmail.com" target="_self">
+            <Gmail class="size-4" />
+            Gmail
+        </SocialPill>
+        <SocialPill href="https://www.linkedin.com/in/chriszumario">
+            <LinkedIn class="size-4" />
+            LinkedIn
+        </SocialPill>
+        <SocialPill href="https://github.com/chriszumario">
+            <GitHub class="size-5" />
+            GitHub
+        </SocialPill>
+    </nav>
+</div>

@@ -1,0 +1,150 @@
+---
+import LinkButton from "./LinkButton.astro";
+import GitHub from "../icons/GitHub.astro";
+import Link from "../icons/Link.astro";
+import TypeScript from "@icons/TypeScript.astro";
+import NodeJs from "@icons/NodeJs.astro";
+import React from "../icons/React.astro";
+import TailwindCss from "@icons/TailwindCss.astro";
+import ReactQuery from "@icons/ReactQuery.astro";
+import Mongo from "@icons/Mongo.astro";
+import Hono from "@icons/Hono.astro";
+import Turso from "@icons/Turso.astro";
+import CloudflareWorkers from "@icons/CloudFlare.astro";
+
+const TAGS = {
+    TYPESCRIPT: {
+        name: "TypeScript",
+        class: "text-white",
+        icon: TypeScript,
+    },
+    NODEJS: {
+        name: "NodeJs",
+        class: "text-white",
+        icon: NodeJs,
+    },
+    HONO: {
+        name: "HonoJs",
+        class: "text-white",
+        icon: Hono,
+    },
+    REACT: {
+        name: "React",
+        class: "text-white",
+        icon: React,
+    },
+    TAILWINDCSS: {
+        name: "Tailwind Css",
+        class: "text-white",
+        icon: TailwindCss,
+    },
+    REACTQUERY: {
+        name: "React Query",
+        class: "text-white",
+        icon: ReactQuery,
+    },
+    MONGODB: {
+        name: "Mongo",
+        class: "text-white",
+        icon: Mongo,
+    },
+    TURSO: {
+        name: "Turso",
+        class: "text-white",
+        icon: Turso,
+    },
+    CLOUDFLAREWORKERS: {
+        name: "Cloudflare Workers",
+        class: "text-white",
+        icon: CloudflareWorkers,
+    },
+};
+const PROJECTS = [
+    {
+        title: "UPTASK - Administrador de Tareas y Proyectos",
+        description:
+            "Gestiona equipos, tareas y proyectos de manera eficiente, priorizando la seguridad y escalabilidad.",
+        github: "https://github.com/chriszumario/uptask",
+        link: "https://uptask-ten-alpha.vercel.app",
+        image: "uptask.webp",
+        tags: [
+            TAGS.TYPESCRIPT,
+            TAGS.NODEJS,
+            TAGS.REACT,
+            TAGS.TAILWINDCSS,
+            TAGS.REACTQUERY,
+            TAGS.MONGODB,
+        ],
+    },
+    {
+        title: "Tasky API es un backend ligero y eficiente escrito en TypeScript.",
+        description:
+            "Ofrece una interfaz para gestionar tareas, recursos, habilidades y más.",
+        github: "https://github.com/chriszumario/tasky-api",
+        link: "https://tasky-api.ryo-split.workers.dev",
+        image: "tasky.webp",
+        tags: [
+            TAGS.TYPESCRIPT,
+            TAGS.NODEJS,
+            TAGS.HONO,
+            TAGS.TURSO,
+            TAGS.CLOUDFLAREWORKERS,
+        ],
+    },
+];
+---
+
+<div class="flex flex-col gap-y-16">
+    {
+        PROJECTS.map(({ image, title, description, tags, link, github }) => (
+            <article class="flex flex-col space-x-0 space-y-8 group md:flex-row md:space-x-8 md:space-y-0">
+                <div class="w-full md:w-1/2">
+                    <div class="relative flex flex-col items-center col-span-6 row-span-5 gap-8 transition duration-500 ease-in-out transform shadow-xl overflow-clip rounded-xl sm:rounded-xl md:group-hover:-translate-y-1 md:group-hover:shadow-2xl lg:border lg:border-gray-800 lg:hover:border-gray-700 lg:hover:bg-gray-800/50">
+                        <img
+                            alt="Proyectos"
+                            class="object-cover object-top w-full h-56 transition duration-500 sm:h-full md:scale-110 md:group-hover:scale-105"
+                            src={image}
+                        />
+                    </div>
+                </div>
+
+                <div class="w-full md:w-1/2 md:max-w-lg">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                        {title}
+                    </h3>
+                    <div class="flex flex-wrap mt-2">
+                        <ul class="flex flex-row mb-2 gap-x-2">
+                            {tags?.map((tag) => (
+                                <li>
+                                    <span
+                                        title={tag.name}
+                                        class={`flex gap-x-2 rounded-full text-xs ${tag.class} py-1 px-2 `}
+                                    >
+                                        <tag.icon class="size-6 hover:opacity-40" />
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div class="mt-2 text-gray-700 dark:text-gray-400">
+                            {description}
+                        </div>
+                        <footer class="flex items-end justify-start mt-4 gap-x-4">
+                            {github && (
+                                <LinkButton href={github}>
+                                    <GitHub class="size-5" /> GitHub
+                                </LinkButton>
+                            )}
+                            {link && (
+                                <LinkButton href={link}>
+                                    <Link class="size-4" />
+                                    Preview
+                                </LinkButton>
+                            )}
+                        </footer>
+                    </div>
+                </div>
+            </article>
+        ))
+    }
+</div>
