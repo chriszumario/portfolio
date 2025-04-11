@@ -1,25 +1,34 @@
-# Portafolio
+# 🚀 Portafolio Web Profesional
 
-Este proyecto es un portafolio web personal desarrollado con Astro y Tailwind CSS, diseñado para mostrar habilidades, experiencia y proyectos de forma elegante y profesional.
+[![Astro Badge](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=fff&style=flat)](https://astro.build/)
+[![Tailwind CSS Badge](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=fff&style=flat)](https://tailwindcss.com/)
+[![TypeScript Badge](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff&style=flat)](https://www.typescriptlang.org/)
 
-## 🚀 Tecnologías Utilizadas
+Este proyecto es un portafolio web personal desarrollado con Astro y Tailwind CSS, diseñado para mostrar habilidades, experiencia y proyectos de forma elegante y profesional. Ideal para desarrolladores que buscan destacar su trabajo y experiencia en el mundo digital.
 
-- **[Astro](https://astro.build/)**: Framework web para crear sitios estáticos rápidos
-- **[Tailwind CSS](https://tailwindcss.com/)**: Framework CSS para diseño rápido y responsivo
-- **[TypeScript](https://www.typescriptlang.org/)**: Superset de JavaScript con tipado estático
-- **[Bun](https://bun.sh/)**: Runtime y gestor de paquetes JavaScript rápido
-- **[Fontsource](https://fontsource.org/)**: Para la fuente Onest Variable
+## ✨ Demo
+
+![Portafolio Web Screenshot](public/logo.webp)
+
+## 🛠️ Tecnologías Utilizadas
+
+- **[Astro](https://astro.build/)**: Framework web para crear sitios estáticos rápidos y optimizados
+- **[Tailwind CSS](https://tailwindcss.com/)**: Framework CSS para diseño rápido, responsivo y personalizable
+- **[TypeScript](https://www.typescriptlang.org/)**: Superset de JavaScript con tipado estático para código más robusto
+- **[Bun](https://bun.sh/)**: Runtime y gestor de paquetes JavaScript ultrarrápido
+- **[Fontsource](https://fontsource.org/)**: Para la fuente Onest Variable, proporcionando tipografía moderna y legible
 
 ## 📋 Requisitos Previos
 
 - Node.js (versión 18 o superior)
 - Bun (opcional, pero recomendado para mejor rendimiento)
+- Git (para clonar el repositorio)
 
 ## 🔧 Instalación
 
 1. Clona este repositorio
    ```bash
-   git clone <url-del-repositorio>
+   git clone https://github.com/tu-usuario/portfolio.git
    cd portfolio
    ```
 
@@ -28,7 +37,7 @@ Este proyecto es un portafolio web personal desarrollado con Astro y Tailwind CS
    # Usando npm
    npm install
    
-   # O usando Bun
+   # O usando Bun (recomendado por su velocidad)
    bun install
    ```
 
@@ -75,7 +84,8 @@ bun run preview
 ├── public/             # Archivos estáticos (imágenes, favicon)
 │   ├── favicon.svg
 │   ├── logo.webp
-│   └── p.webp
+│   └── tasky.webp
+│   └── uptask.webp
 ├── src/
 │   ├── components/     # Componentes reutilizables
 │   │   ├── AboutMe.astro
@@ -110,10 +120,13 @@ bun run preview
 
 ## 🎨 Características
 
-- **Diseño Responsivo**: Adaptable a diferentes tamaños de pantalla
-- **Modo Oscuro/Claro**: Cambio automático según preferencias del sistema
-- **Animaciones Suaves**: Transiciones entre páginas con ViewTransitions API
+- **Diseño Responsivo**: Adaptable a diferentes tamaños de pantalla (móvil, tablet, escritorio)
+- **Modo Oscuro/Claro**: Cambio automático según preferencias del sistema o selección manual
+- **Animaciones Suaves**: Transiciones entre páginas con ViewTransitions API de Astro
 - **Iconografía Rica**: Amplia colección de iconos para tecnologías y redes sociales
+- **Optimización SEO**: Metadatos configurados para mejor indexación en motores de búsqueda
+- **Rendimiento Optimizado**: Puntuación alta en Lighthouse gracias a la arquitectura de Astro
+- **Accesibilidad**: Diseñado siguiendo las mejores prácticas de accesibilidad web
 
 ## 🌐 Personalización
 
@@ -129,6 +142,24 @@ Para personalizar el portafolio con tu información:
 
 3. Ajusta los colores y estilos en `tailwind.config.mjs` según tus preferencias
 
+4. Personaliza el tema oscuro/claro modificando las clases en los componentes relevantes
+
+## 🤝 Contribuir
+
+Las contribuciones son bienvenidas. Si deseas mejorar este proyecto:
+
+1. Haz un fork del repositorio
+2. Crea una rama para tu característica (`git checkout -b feature/amazing-feature`)
+3. Haz commit de tus cambios (`git commit -m 'Add some amazing feature'`)
+4. Haz push a la rama (`git push origin feature/amazing-feature`)
+5. Abre un Pull Request
+
 ## 📄 Licencia
 
 Este proyecto está disponible como código abierto bajo la licencia MIT.
+
+## 👏 Agradecimientos
+
+- [Astro](https://astro.build/) por proporcionar un framework increíble
+- [Tailwind CSS](https://tailwindcss.com/) por simplificar el diseño
+- [Fontsource](https://fontsource.org/) por las fuentes web optimizadas
