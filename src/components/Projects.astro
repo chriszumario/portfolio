@@ -11,6 +11,9 @@ import Mongo from "@icons/Mongo.astro";
 import Hono from "@icons/Hono.astro";
 import Turso from "@icons/Turso.astro";
 import CloudflareWorkers from "@icons/CloudFlare.astro";
+import NextJS from "@icons/NextJS.astro";
+import PosgreSql from "@icons/PosgreSql.astro";
+import Prisma from "@icons/Prisma.astro";
 
 const TAGS = {
     TYPESCRIPT: {
@@ -33,6 +36,11 @@ const TAGS = {
         class: "text-white",
         icon: React,
     },
+    NEXTJS: {
+        name: "NextJs",
+        class: "text-white",
+        icon: NextJS,
+    },
     TAILWINDCSS: {
         name: "Tailwind Css",
         class: "text-white",
@@ -53,6 +61,16 @@ const TAGS = {
         class: "text-white",
         icon: Turso,
     },
+    POSGRESQL: {
+        name: "PosgreSql",
+        class: "text-white",
+        icon: PosgreSql,
+    },
+    PRISMA: {
+        name: "Prisma Orm",
+        class: "text-white",
+        icon: Prisma,
+    },
     CLOUDFLAREWORKERS: {
         name: "Cloudflare Workers",
         class: "text-white",
@@ -61,7 +79,23 @@ const TAGS = {
 };
 const PROJECTS = [
     {
-        title: "UPTASK - Administrador de Tareas y Proyectos",
+        title: "CashTracker - Sistema de Gestión de Presupuestos",
+        description:
+            "CashTracker es un sistema completo para la gestión de presupuestos personales, compuesto por una API RESTful y una aplicación web moderna.",
+        github: "https://github.com/chriszumario/cashtracker",
+        link: "https://cashtracker-black.vercel.app/",
+        image: "cashtracker.webp",
+        tags: [
+            TAGS.TYPESCRIPT,
+            TAGS.NODEJS,
+            TAGS.TAILWINDCSS,
+            TAGS.NEXTJS,
+            TAGS.POSGRESQL,
+            TAGS.PRISMA,
+        ],
+    },
+    {
+        title: "UpTask - Administrador de Tareas y Proyectos",
         description:
             "Gestiona equipos, tareas y proyectos de manera eficiente, priorizando la seguridad y escalabilidad.",
         github: "https://github.com/chriszumario/uptask",
@@ -70,8 +104,8 @@ const PROJECTS = [
         tags: [
             TAGS.TYPESCRIPT,
             TAGS.NODEJS,
-            TAGS.REACT,
             TAGS.TAILWINDCSS,
+            TAGS.REACT,
             TAGS.REACTQUERY,
             TAGS.MONGODB,
         ],
