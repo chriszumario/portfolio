@@ -1,0 +1,200 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostContent from '../../features/blog/PostContent.astro';
+import TagBadge from '../../features/blog/TagBadge.astro';
+import Button from '../../components/ui/Button.astro';
+import LikeButton from '../../features/blog/LikeButton';
+import CopyLinkButton from '../../features/blog/CopyLinkButton';
+import { fetchHero } from '../../lib/api';
+import type { Hero } from '../../features/hero/types';
+import { formatDate } from '../../lib/format';
+import { serializeJsonForHtml } from '../../lib/json';
+import { resolveApiAssetUrl } from '../../lib/http';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+  }));
+}
+
+const { slug = '' } = Astro.params;
+
+const entry = slug ? await getEntry('blog', slug) : undefined;
+
+if (!entry) {
+  return Astro.redirect('/blog');
+}
+
+const post = entry.data;
+const { Content } = await render(entry);
+const heroResult = await Promise.allSettled([fetchHero()]);
+const heroData: Hero | null =
+  heroResult[0].status === 'fulfilled' ? heroResult[0].value : null;
+
+const brandName = heroData?.name ?? "Christian Perez";
+const publishedDateFormatted = formatDate(post.published_at, 'long');
+const coverImage = resolveApiAssetUrl(post.cover_image_url) ?? "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800";
+
+const initials = brandName
+  ? brandName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+  : "CP";
+
+// JSON-LD BlogPosting Schema for SEO
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.title,
+  "description": post.excerpt ?? post.title,
+  "image": [coverImage],
+  "datePublished": post.published_at,
+  "author": {
+    "@type": "Person",
+    "name": brandName
+  }
+};
+---
+
+<BaseLayout
+  title={post.title}
+  description={post.excerpt ?? post.title}
+  image={coverImage}
+  canonical={Astro.url.href}
+  brandName={brandName}
+  githubUrl={heroData?.github_url}
+  linkedinUrl={heroData?.linkedin_url}
+  email={heroData?.email}
+  ogType="article"
+>
+  <!-- JSON-LD Article Schema -->
+  <script is:inline type="application/ld+json" set:html={serializeJsonForHtml(articleSchema)} />
+
+  <!-- Consistent Outer Container (max-w-6xl) -->
+  <div class="pt-28 pb-16 md:pt-32 md:pb-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Navigation Back Link -->
+    <div class="mb-8 flex items-center justify-between">
+      <Button href="/blog" variant="ghost" size="sm">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Volver a publicaciones
+      </Button>
+    </div>
+
+    <!-- Article Container -->
+    <article class="space-y-10 rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 shadow-2xl shadow-black/30 sm:p-10 lg:p-14">
+      
+      <!-- Article Header -->
+      <header class="space-y-6 max-w-4xl">
+        
+        <!-- Tags -->
+        {post.tags && post.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2">
+            {post.tags.map((tag) => (
+              <TagBadge tag={tag} />
+            ))}
+          </div>
+        )}
+
+        <!-- Title -->
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight font-heading" transition:name={`post-title-${post.slug}`}>
+          {post.title}
+        </h1>
+
+        <!-- Meta Information Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 text-sm text-slate-400 font-medium pt-4 border-t border-slate-800/80">
+          
+          <div class="flex items-center gap-4 flex-wrap">
+            <!-- Author Badge -->
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-extrabold text-xs">
+                {initials}
+              </div>
+              <span class="text-slate-200 font-semibold">{brandName}</span>
+            </div>
+
+            <span class="text-slate-700 hidden sm:inline">•</span>
+
+            <!-- Date -->
+            <div class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <time datetime={post.published_at ?? ''}>
+                {publishedDateFormatted}
+              </time>
+            </div>
+
+            <span class="text-slate-700 hidden sm:inline">•</span>
+
+            <!-- Reading Time -->
+            <span class="inline-flex items-center gap-1.5 text-indigo-300 font-medium">
+              <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {post.reading_time_minutes} min de lectura
+            </span>
+          </div>
+
+          <!-- SolidJS Reactive Likes & Views Component -->
+          <LikeButton
+            client:load
+            slug={post.slug}
+            initialLikes={post.likes_count ?? 0}
+            viewsCount={post.views_count}
+          />
+
+        </div>
+
+      </header>
+
+      <!-- Cover Image Hero with Native Hero Transition -->
+      <div class="rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 max-h-[480px] shadow-2xl">
+        <img
+          src={coverImage}
+          alt={`Imagen de portada: ${post.title}`}
+          class="w-full h-full object-cover max-h-[480px]"
+          transition:name={`post-cover-${post.slug}`}
+          width={1200}
+          height={630}
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+
+      <!-- Main Content -->
+      <div class="max-w-4xl">
+        <PostContent>
+          <Content />
+        </PostContent>
+      </div>
+
+      <!-- Social Share Buttons & Author Footer -->
+      <div class="pt-8 border-t border-slate-800 space-y-6">
+        
+        <!-- Share Bar -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <span class="text-sm font-semibold text-slate-300">
+            ¿Te resultó útil? ¡Compártelo!
+          </span>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- SolidJS Reactive Copy Link Button -->
+            <CopyLinkButton client:idle />
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <Button href="/blog" variant="secondary" size="md">
+            Ver todas las publicaciones
+          </Button>
+        </div>
+
+      </div>
+
+    </article>
+
+  </div>
+</BaseLayout>

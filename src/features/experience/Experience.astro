@@ -1,0 +1,38 @@
+---
+import ExperienceItem from './ExperienceItem.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+
+import type { Experience } from './types';
+
+type Props = {
+  items: Experience[] | null;
+};
+
+const { items } = Astro.props;
+
+const hasItems = items && items.length > 0;
+const sortedList = hasItems
+  ? [...items].sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+  : [];
+---
+
+{hasItems && (
+  <section id="experience" class="py-16 sm:py-24 bg-slate-950 border-t border-slate-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <SectionHeading eyebrow="01 / Trayectoria" title="Experiencia que se traduce en producto" />
+
+      <!-- Timeline List with continuous vertical line and clear spacing -->
+      <ol class="relative border-l-2 border-slate-800/80 ml-3 sm:ml-4 pl-6 sm:pl-10 space-y-12 sm:space-y-16" aria-label="Línea de tiempo de experiencia laboral">
+        {sortedList.map((item) => (
+          <li
+            class="relative"
+          >
+            <ExperienceItem item={item} />
+          </li>
+        ))}
+      </ol>
+
+    </div>
+  </section>
+)}

@@ -1,0 +1,41 @@
+---
+import PostCard from './PostCard.astro';
+import Button from '../../components/ui/Button.astro';
+import type { PostSummary } from './types';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+
+type Props = {
+  posts: PostSummary[] | null;
+};
+
+const { posts } = Astro.props;
+
+const postList = posts && posts.length > 0 ? posts.slice(0, 3) : [];
+---
+
+{postList.length > 0 && (
+  <section id="blog-preview" class="py-16 sm:py-24 bg-slate-950 border-t border-slate-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <SectionHeading eyebrow="05 / Notas" title="Ideas sobre construir mejor software" />
+
+      <!-- Posts Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {postList.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+
+      <!-- View All Button below posts grid -->
+      <div class="mt-10 sm:mt-12 text-center">
+        <Button href="/blog" variant="secondary" size="lg">
+          Ver Todos los Artículos
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </Button>
+      </div>
+
+    </div>
+  </section>
+)}

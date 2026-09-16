@@ -1,0 +1,115 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import HeaderNav from '../components/HeaderNav';
+import Footer from '../features/layout/Footer.astro';
+import '../styles/global.css';
+import { serializeJsonForHtml } from '../lib/json';
+
+type Props = {
+  title: string;
+  description: string;
+  image?: string;
+  canonical?: string;
+  githubUrl?: string | null;
+  linkedinUrl?: string | null;
+  email?: string | null;
+  brandName?: string;
+  ogType?: 'website' | 'article';
+};
+
+const {
+  title,
+  description,
+  image,
+  canonical = Astro.url.href,
+  githubUrl,
+  linkedinUrl,
+  email,
+  brandName = "Christian Perez",
+  ogType = 'website',
+} = Astro.props;
+
+const fullTitle = title.includes('Portfolio Profesional') ? title : `${title} | Portfolio Profesional`;
+const socialImage = image ? new URL(image, Astro.url) : null;
+const profileUrl = new URL('/', Astro.site ?? Astro.url).toString();
+
+// JSON-LD Person Structured Data for SEO
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": brandName,
+  "jobTitle": "Desarrollador Full-Stack",
+  "url": profileUrl,
+  "sameAs": [
+    githubUrl,
+    linkedinUrl,
+  ].filter(Boolean),
+  "email": email,
+  "description": description
+};
+---
+
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth bg-[#070b0d] scheme-dark motion-reduce:scroll-auto">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=2" />
+
+    <!-- Primary Meta Tags -->
+    <title>{fullTitle}</title>
+    <meta name="title" content={fullTitle} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#070b0d" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {socialImage && <meta property="og:image" content={socialImage.toString()} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonical} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage.toString()} />}
+
+    <!-- Structured Data JSON-LD -->
+    <script is:inline type="application/ld+json" set:html={serializeJsonForHtml(personSchema)} />
+
+    <!-- Native Astro View Transitions -->
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen overflow-x-hidden bg-[#070b0d] font-sans text-slate-100 antialiased selection:bg-emerald-300 selection:text-slate-950">
+    <!-- Skip to main content link for WCAG keyboard accessibility -->
+    <a
+      href="#main-content"
+      class="fixed left-4 top-4 z-60 -translate-y-24 rounded-full bg-emerald-300 px-4 py-2 font-semibold text-slate-950 transition-transform focus:translate-y-0"
+    >
+      Saltar al contenido principal
+    </a>
+
+    <HeaderNav
+      client:load
+      brandName={brandName}
+      email={email}
+      initialPath={Astro.url.pathname}
+    />
+
+    <!-- Main Page Content -->
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer
+      brandName={brandName}
+      githubUrl={githubUrl}
+      linkedinUrl={linkedinUrl}
+      email={email}
+    />
+  </body>
+</html>

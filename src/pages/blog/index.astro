@@ -1,0 +1,208 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../features/blog/PostCard.astro';
+import TagBadge from '../../features/blog/TagBadge.astro';
+import Button from '../../components/ui/Button.astro';
+
+import { fetchHero } from '../../lib/api';
+import { HERO_FALLBACK } from '../../lib/fallbacks';
+
+const [collectionResult, heroResult] = await Promise.allSettled([
+  getCollection('blog'),
+  fetchHero(),
+]);
+
+const collectionEntries = collectionResult.status === 'fulfilled' ? collectionResult.value : [];
+const heroData = heroResult.status === 'fulfilled' ? heroResult.value : null;
+const brandName = heroData?.name ?? HERO_FALLBACK.name;
+
+const posts = collectionEntries.map((entry) => entry.data);
+
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+}
+const tagsList = [...tagCounts].map(([tag, count]) => ({ tag, count }));
+
+const pageTitle = "Blog & Artículos Técnicos";
+const description = "Publicaciones sobre arquitectura de software, backend en Python, FastAPI, desarrollo web y rendimiento.";
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={description}
+  canonical={Astro.url.href}
+  brandName={brandName}
+  githubUrl={heroData?.github_url}
+  linkedinUrl={heroData?.linkedin_url}
+  email={heroData?.email}
+>
+  <div class="pt-28 pb-16 md:pt-32 md:pb-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Section Header with Icon Box -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-emerald-300/20 bg-emerald-300/10 text-emerald-300">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+          </svg>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-white font-heading tracking-tight" transition:name="blog-heading">
+          Publicaciones & Artículos Técnicos
+        </h1>
+      </div>
+      <p class="text-slate-400 text-base sm:text-lg max-w-2xl font-sans">
+        Compartiendo experiencias y buenas prácticas sobre ingeniería de software, arquitectura limpia y desarrollo web moderno.
+      </p>
+    </div>
+
+    <!-- Filter Bar & Tag Selector -->
+    {tagsList.length > 0 && (
+      <div class="mb-12 space-y-4 rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            Filtrar por Etiqueta
+          </span>
+
+          <a id="clear-filter-btn" href="/blog" class="hidden text-xs font-semibold text-indigo-400 hover:text-white transition-colors items-center gap-1">
+            Limpiar filtro ✕
+          </a>
+        </div>
+
+        <div class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
+          <a
+            id="all-tags-badge"
+            href="/blog"
+            class="shrink-0 rounded-full border border-emerald-300 bg-emerald-300 px-3 py-1 text-xs font-semibold text-slate-950 transition"
+          >
+            Todos los artículos ({posts.length})
+          </a>
+
+          {tagsList.map((t) => (
+            <TagBadge
+              tag={t.tag}
+              count={t.count}
+            />
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Posts Grid -->
+    <div id="posts-grid" class:list={["grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8", { hidden: posts.length === 0 }]}>
+      {posts.map((post) => (
+        <div class="post-card-item h-full" data-tags={JSON.stringify(post.tags ?? [])}>
+          <PostCard post={post} />
+        </div>
+      ))}
+    </div>
+
+    <!-- Empty State Container -->
+    <div id="no-posts-found" class:list={["mx-auto max-w-xl space-y-4 rounded-3xl border border-white/10 bg-white/[0.03] py-20 text-center", { hidden: posts.length > 0 }]}>
+      <div class="w-12 h-12 rounded-2xl bg-indigo-950/80 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-white font-heading">No se encontraron artículos</h3>
+      <p class="text-slate-400 text-sm max-w-md mx-auto">
+        {posts.length === 0
+          ? 'Todavía no hay artículos publicados.'
+          : 'No hay artículos publicados bajo el filtro seleccionado.'}
+      </p>
+      {posts.length > 0 && (
+        <div class="pt-2">
+          <Button href="/blog" variant="secondary" size="md">
+            Ver todos los artículos
+          </Button>
+        </div>
+      )}
+    </div>
+
+  </div>
+</BaseLayout>
+
+<script>
+  function setupTagFilter() {
+    const params = new URLSearchParams(window.location.search);
+    const activeTag = params.get('tag')?.trim().toLowerCase();
+
+    const postItems = document.querySelectorAll<HTMLElement>('.post-card-item');
+    const emptyState = document.getElementById('no-posts-found');
+    const postsGrid = document.getElementById('posts-grid');
+    const tagBadges = document.querySelectorAll<HTMLElement>('[data-tag-badge]');
+    const allBadge = document.getElementById('all-tags-badge');
+    const clearFilterBtn = document.getElementById('clear-filter-btn');
+
+    if (!postItems.length) return;
+
+    let visibleCount = 0;
+
+    postItems.forEach((item) => {
+      const rawTags = item.getAttribute('data-tags') || '[]';
+      let tags: string[] = [];
+      try {
+        tags = JSON.parse(rawTags).map((t: string) => String(t).toLowerCase());
+      } catch {
+        tags = [];
+      }
+
+      if (!activeTag || tags.includes(activeTag)) {
+        item.classList.remove('hidden');
+        item.removeAttribute('aria-hidden');
+        visibleCount++;
+      } else {
+        item.classList.add('hidden');
+        item.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    if (emptyState && postsGrid) {
+      if (visibleCount === 0) {
+        postsGrid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+      } else {
+        postsGrid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    if (allBadge) {
+      if (!activeTag) {
+        allBadge.classList.add('bg-emerald-300', 'text-slate-950', 'border-emerald-300');
+        allBadge.classList.remove('bg-white/[0.04]', 'text-slate-300', 'border-white/10');
+      } else {
+        allBadge.classList.remove('bg-emerald-300', 'text-slate-950', 'border-emerald-300');
+        allBadge.classList.add('bg-white/[0.04]', 'text-slate-300', 'border-white/10');
+      }
+    }
+
+    if (clearFilterBtn) {
+      if (activeTag) {
+        clearFilterBtn.classList.remove('hidden');
+        clearFilterBtn.classList.add('flex');
+      } else {
+        clearFilterBtn.classList.add('hidden');
+        clearFilterBtn.classList.remove('flex');
+      }
+    }
+
+    tagBadges.forEach((badge) => {
+      const badgeTag = badge.getAttribute('data-tag-name')?.trim().toLowerCase();
+      if (activeTag && badgeTag === activeTag) {
+        badge.classList.add('bg-emerald-300', 'text-slate-950', 'border-emerald-300');
+        badge.classList.remove('bg-white/[0.04]', 'text-slate-300', 'border-white/10');
+      } else {
+        badge.classList.remove('bg-emerald-300', 'text-slate-950', 'border-emerald-300');
+        badge.classList.add('bg-white/[0.04]', 'text-slate-300', 'border-white/10');
+      }
+    });
+  }
+
+  setupTagFilter();
+  document.addEventListener('astro:page-load', setupTagFilter);
+</script>

@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../features/hero/Hero.astro';
+import Experience from '../features/experience/Experience.astro';
+import Projects from '../features/projects/Projects.astro';
+import Skills from '../features/skills/Skills.astro';
+import Education from '../features/education/Education.astro';
+import BlogTeaser from '../features/blog/BlogTeaser.astro';
+import About from '../features/about/About.astro';
+import { getCollection } from 'astro:content';
+
+import {
+  fetchHero,
+  fetchAbout,
+  fetchExperience,
+  fetchEducation,
+  fetchProjects,
+  fetchSkills,
+} from '../lib/api';
+import {
+  ABOUT_FALLBACK,
+  EDUCATION_FALLBACK,
+  EXPERIENCE_FALLBACK,
+  HERO_FALLBACK,
+  PROJECTS_FALLBACK,
+} from '../lib/fallbacks';
+
+// Fetch section data concurrently at build time (SSG) with graceful fallback
+const [
+  heroResult,
+  experienceResult,
+  projectsResult,
+  skillsResult,
+  educationResult,
+  postsResult,
+  aboutResult,
+] = await Promise.allSettled([
+  fetchHero(),
+  fetchExperience(),
+  fetchProjects(),
+  fetchSkills(),
+  fetchEducation(),
+  getCollection('blog'),
+  fetchAbout(),
+]);
+
+const hero = heroResult.status === 'fulfilled' ? heroResult.value : HERO_FALLBACK;
+const experience = experienceResult.status === 'fulfilled' ? experienceResult.value : EXPERIENCE_FALLBACK;
+const projects = projectsResult.status === 'fulfilled' ? projectsResult.value : PROJECTS_FALLBACK;
+const skills = skillsResult.status === 'fulfilled' ? skillsResult.value : null;
+const education = educationResult.status === 'fulfilled' ? educationResult.value : EDUCATION_FALLBACK;
+const posts = postsResult.status === 'fulfilled'
+  ? postsResult.value
+      .toSorted((a, b) => (b.data.published_at ?? '').localeCompare(a.data.published_at ?? ''))
+      .slice(0, 3)
+      .map((entry) => entry.data)
+  : null;
+const about = aboutResult.status === 'fulfilled' ? aboutResult.value : ABOUT_FALLBACK;
+
+const title = hero ? `${hero.name} | ${hero.title}` : "Portfolio Profesional";
+const description = hero?.description ?? "Portfolio profesional desarrollado en Astro + Tailwind CSS v4";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  brandName={hero?.name}
+  githubUrl={hero?.github_url}
+  linkedinUrl={hero?.linkedin_url}
+  email={hero?.email}
+>
+  <!-- 1. Inicio -->
+  <Hero data={hero} />
+
+  <!-- 2. Experiencia -->
+  <Experience items={experience} />
+
+  <!-- 3. Proyectos -->
+  <Projects items={projects} />
+
+  <!-- 4. Skills & Tecnologías -->
+  <Skills items={skills} />
+
+  <!-- 5. Educación -->
+  <Education items={education} />
+
+  <!-- 6. Blog -->
+  <BlogTeaser posts={posts} />
+
+  <!-- 7. Sobre mí -->
+  <About data={about} />
+</BaseLayout>

@@ -1,0 +1,116 @@
+---
+import TagBadge from './TagBadge.astro';
+import type { PostSummary } from './types';
+import { formatDate } from '../../lib/format';
+import { resolveApiAssetUrl } from '../../lib/http';
+
+type Props = {
+  post: PostSummary;
+};
+
+const { post } = Astro.props;
+
+const publishedDateFormatted = formatDate(post.published_at, 'short');
+const coverImage = resolveApiAssetUrl(post.cover_image_url) ?? "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800";
+---
+
+<article class="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] transition duration-300 hover:-translate-y-1 hover:border-emerald-300/30 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-black/30 motion-reduce:transform-none">
+  
+  <!-- Cover Image Container with Native Hero View Transition -->
+  <a href={`/blog/${post.slug}`} class="block relative w-full h-52 sm:h-60 overflow-hidden bg-slate-900 focus-visible:outline-2 focus-visible:outline-indigo-400">
+    <img
+      src={coverImage}
+      alt={`Portada del artículo: ${post.title}`}
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+      transition:name={`post-cover-${post.slug}`}
+      width={800}
+      height={450}
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+
+    <!-- Read Time Overlay Badge -->
+    <div class="absolute top-4 right-4 flex items-center gap-2">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-950/80 text-indigo-300 border border-slate-800 backdrop-blur-md">
+        <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {post.reading_time_minutes} min
+      </span>
+    </div>
+  </a>
+
+  <!-- Content & Metadata -->
+  <div class="p-6 sm:p-8 flex flex-col flex-grow justify-between space-y-6">
+    
+    <div class="space-y-3">
+      <!-- Date, Views & Likes Metadata Row -->
+      <div class="flex items-center justify-between text-xs font-semibold text-slate-400 flex-wrap gap-2">
+        <div class="flex items-center gap-1.5 uppercase tracking-wider">
+          <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <time datetime={post.published_at ?? ''}>
+            {publishedDateFormatted}
+          </time>
+        </div>
+
+        <div class="flex items-center gap-3 text-slate-400">
+          <span class="inline-flex items-center gap-1" title="Vistas acumuladas">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            {post.views_count ?? 0}
+          </span>
+
+          <span class="inline-flex items-center gap-1" title="Me gustas">
+            <svg class="w-3.5 h-3.5 text-rose-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+            </svg>
+            {post.likes_count ?? 0}
+          </span>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <h3 class="text-xl sm:text-2xl font-extrabold text-white font-heading tracking-tight leading-snug group-hover:text-indigo-400 transition-colors" transition:name={`post-title-${post.slug}`}>
+        <a href={`/blog/${post.slug}`} class="focus-visible:outline-2 focus-visible:outline-indigo-400">
+          {post.title}
+        </a>
+      </h3>
+
+      <!-- Excerpt -->
+      {post.excerpt && (
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed font-sans line-clamp-3">
+          {post.excerpt}
+        </p>
+      )}
+    </div>
+
+    <!-- Footer: Tags & Action Link -->
+    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3 flex-wrap">
+      {post.tags && post.tags.length > 0 && (
+        <div class="flex flex-wrap gap-1.5">
+          {post.tags.slice(0, 3).map((tag) => (
+            <TagBadge tag={tag} />
+          ))}
+        </div>
+      )}
+
+      <a
+        href={`/blog/${post.slug}`}
+        class="text-xs font-extrabold text-indigo-400 group-hover:text-indigo-300 inline-flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-indigo-400 group/btn"
+        aria-label={`Leer el artículo completo: ${post.title}`}
+      >
+        <span>Leer artículo</span>
+        <svg class="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+
+  </div>
+
+</article>

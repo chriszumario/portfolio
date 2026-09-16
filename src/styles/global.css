@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--portfolio-font-sans);
+  --font-heading: var(--portfolio-font-heading);
+}

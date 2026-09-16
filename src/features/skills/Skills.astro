@@ -1,0 +1,43 @@
+---
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import type { SkillCategory } from './types';
+
+type Props = {
+  items: SkillCategory[] | null;
+};
+
+const { items } = Astro.props;
+
+const categories = items
+  ? [...items]
+      .sort((a, b) => a.order - b.order)
+      .map((category) => ({ ...category, skills: [...category.skills].sort((a, b) => a.order - b.order) }))
+  : [];
+---
+
+{categories.length > 0 && (
+  <section id="skills" class="border-t border-white/5 bg-slate-950 py-20 sm:py-28">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <SectionHeading eyebrow="03 / Herramientas" title="Tecnologías con las que construyo" description="Un stack enfocado en productos mantenibles, rápidos y fáciles de evolucionar." />
+      <div class="grid gap-5 md:grid-cols-2">
+        {categories.map((category) => (
+          <article class="rounded-3xl border border-white/10 bg-white/2.5 p-5 sm:p-7">
+            <div class="mb-5 flex items-baseline justify-between gap-4 border-b border-white/10 pb-4">
+              <h3 class="text-lg font-bold text-white">{category.name}</h3>
+              <span class="rounded-full border border-white/5 bg-white/3 px-2.5 py-1 text-xs font-medium text-slate-400">
+                {category.skills.length} {category.skills.length === 1 ? 'tecnología' : 'tecnologías'}
+              </span>
+            </div>
+            <ul class="flex flex-wrap gap-2" aria-label={`Habilidades de ${category.name}`}>
+              {category.skills.map((skill) => (
+                <li class="rounded-full border border-emerald-400/15 bg-emerald-400/6 px-3 py-1.5 text-sm font-medium text-emerald-100">
+                  {skill.name}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

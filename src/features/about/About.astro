@@ -1,0 +1,66 @@
+---
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import type { About } from './types';
+import { resolveApiAssetUrl } from '../../lib/http';
+
+type Props = {
+  data: About | null;
+};
+
+const { data } = Astro.props;
+
+const hasBio = Boolean(data && data.bio && data.bio.trim());
+const bioParagraphs = hasBio && data?.bio ? data.bio.split('\n\n').filter(Boolean) : [];
+const profileImage = resolveApiAssetUrl(data?.profile_image_url);
+---
+
+{hasBio && (
+  <section id="about" class="py-16 sm:py-24 bg-slate-950 border-t border-slate-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <SectionHeading eyebrow="06 / Perfil" title="La persona detrás del código" />
+
+      <!-- Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          <!-- Biography Text -->
+          <div class="lg:col-span-7 space-y-4 text-slate-300 text-base sm:text-lg leading-relaxed font-sans">
+            {bioParagraphs.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+          </div>
+
+          <!-- Graphic Image Card -->
+          <div class="hidden lg:flex lg:col-span-5 justify-center">
+            <div class="relative group transform rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
+              
+              <!-- Glowing back aura -->
+              <div class="absolute -inset-2 rounded-3xl bg-emerald-300/10 blur-xl opacity-50 transition duration-500 group-hover:opacity-80"></div>
+
+              <!-- Card Box -->
+              <div class="relative flex h-56 w-56 items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-2.5 shadow-2xl shadow-black/30 sm:h-72 sm:w-72 sm:p-3">
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt="Fotografía de perfil profesional sobre mí"
+                    class="w-full h-full object-cover rounded-2xl"
+                    width={300}
+                    height={300}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="w-full h-full bg-slate-900 text-indigo-300 font-heading font-extrabold text-5xl rounded-2xl flex items-center justify-center border border-indigo-500/30">
+                    CP
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
+
+      </div>
+
+    </div>
+  </section>
+)}

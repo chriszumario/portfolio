@@ -1,0 +1,38 @@
+---
+import ProjectCard from './ProjectCard.astro';
+import type { Project } from './types';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+
+type Props = {
+  items: Project[] | null;
+};
+
+const { items } = Astro.props;
+
+const hasItems = items && items.length > 0;
+const sortedList = hasItems
+  ? [...items].sort((a, b) => {
+      if (a.is_featured === b.is_featured) {
+        return (a.order ?? 999) - (b.order ?? 999);
+      }
+      return a.is_featured ? -1 : 1;
+    })
+  : [];
+---
+
+{hasItems && (
+  <section id="projects" class="py-16 sm:py-24 bg-slate-950 border-t border-slate-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <SectionHeading eyebrow="02 / Trabajo seleccionado" title="Proyectos diseñados para resolver" />
+
+      <!-- Vertical List of Projects -->
+      <div class="space-y-12 sm:space-y-16">
+        {sortedList.map((project) => (
+          <ProjectCard project={project} />
+        ))}
+      </div>
+
+    </div>
+  </section>
+)}
