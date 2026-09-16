@@ -1,54 +1,64 @@
 # Portfolio público
 
-Sitio público del portfolio construido con Astro 7, SolidJS y Tailwind CSS 4.
-Astro genera las páginas de forma estática y obtiene el contenido desde la API
-configurada mediante `PUBLIC_API_URL`.
+Sitio web público del portfolio, construido con [Astro](https://astro.build/),
+SolidJS y Tailwind CSS. El contenido se obtiene desde una API y las páginas se
+generan de forma estática.
+
+## Proyectos relacionados
+
+Este sitio utiliza los siguientes proyectos:
+
+- **Dashboard de administración:** gestiona el contenido del portfolio desde
+  [portfolio-admin](https://github.com/chriszumario/portfolio-admin).
+- **API:** proporciona los datos que consume este sitio desde
+  [portfolio-api](https://github.com/chriszumario/portfolio-api).
 
 ## Requisitos
 
 - Node.js 22.12 o posterior
-- Bun
-- Una API compatible con los endpoints consumidos desde `src/lib/api.ts` y
-  `src/features/blog/api.ts`
+- [Bun](https://bun.sh/)
 
-`PUBLIC_API_URL` representa la URL base completa de la API. Si no está definida, se usa
-`http://127.0.0.1:8000/api/v1`.
-
-## Comandos
-
-Ejecutar desde este directorio:
+## Instalación
 
 ```sh
 bun install
-bun dev
-bun run check
-bun run test
-bun run build
-bun run verify
-bun run preview
 ```
 
-Según `AGENTS.md`, para mantener el servidor de desarrollo en segundo plano se
-puede usar:
+Configura la URL base de la API en un archivo `.env`:
+
+```env
+PUBLIC_API_URL=http://127.0.0.1:8000/api/v1
+```
+
+Si no defines esta variable, se utilizará esa misma URL local por defecto.
+
+## Desarrollo
+
+```sh
+bun dev
+```
+
+Para iniciar el servidor en segundo plano:
 
 ```sh
 bun astro dev --background
 ```
 
-## Estructura
+## Comandos útiles
 
-- `src/pages/`: portada, índice del blog y rutas estáticas de artículos.
-- `src/features/`: secciones y componentes por dominio.
+```sh
+bun run check    # Validar el proyecto
+bun run test     # Ejecutar los tests
+bun run build    # Generar la versión de producción
+bun run verify   # Ejecutar validación, tests y build
+bun run preview  # Previsualizar la build
+```
+
+## Estructura principal
+
+- `src/pages/`: páginas del sitio y del blog.
+- `src/features/`: componentes organizados por sección.
 - `src/components/ui/`: componentes visuales compartidos.
-- `src/lib/`: cliente HTTP, fallbacks y utilidades.
-- `src/styles/global.css`: estilos globales y Tailwind.
-- `tests/`: tests de contratos, servicios y componentes con Vitest y Astro Container API.
-- `public/`: recursos servidos sin transformación.
-
-La portada usa los fallbacks de `src/lib/fallbacks.ts` cuando una petición de
-contenido principal falla durante el build. Las publicaciones solo se generan
-cuando la API devuelve artículos publicados.
-
-La API actual incrementa `views_count` al consultar el detalle de un artículo.
-Como el sitio es estático, esas consultas se realizan durante el build; corregir la
-métrica requiere que el backend exponga una lectura sin efectos secundarios.
+- `src/lib/`: cliente de la API y utilidades.
+- `public/`: archivos públicos.
+- `tests/`: pruebas automatizadas.
